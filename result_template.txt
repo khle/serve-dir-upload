@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Error Uploading</title>
+        <link rel="stylesheet" type="tex/css" href="_public/styles.css" >
+    </head>
+    <body>
+        <main>
+            <header>
+                <h1>Status uploading <%= uploadedFile %></h1>
+            </header>
+
+            <div style="margin-top: 20px;">
+                <%= resultUploadingFile %>
+            </div>
+            
+            <ul style="margin-top: 15px;">
+                <li><a href="/_list">Back to List</a></li>
+                <li><a href="/_upload">Back to Upload</a></li>
+            </ul>            
+        </main>
+    </body>
+</html>
