@@ -1,6 +1,5 @@
 const handler = require("serve-handler")
 const http = require("http")
-//const fs = require('fs');
 const fs = require("fs-extra")
 const formidable = require("formidable")
 const template = require("lodash.template")
