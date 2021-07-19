@@ -14,8 +14,6 @@ const result_template = fs.readFileSync("result_template.txt")
 const servePath = process.env.SERVE_PATH
 
 const server = http.createServer((request, response) => {
-  console.log(request.url)
-
   if (request.url == "/") {
     response.writeHead(200)
     response.write(index_html)
@@ -30,13 +28,16 @@ const server = http.createServer((request, response) => {
     response.writeHead(200)
     response.write(upload_html)
     return response.end()
-  } else if (request.url == "/_doupload" || request.url == "/_doupload/") {
-    var form = new formidable.IncomingForm()
-    form.parse(request, function (err, fields, files) {
-      var oldpath = files.filetoupload.path
-      var newpath = `${servePath}/${files.filetoupload.name}`
+  } else if (
+    (request.url == "/_doupload" || request.url == "/_doupload/") &&
+    request.method === "POST"
+  ) {
+    const form = new formidable.IncomingForm()
+    form.parse(request, (_err, _fields, files) => {
+      const tempUploadedPath = files.filetoupload.path
+      const finalUploadedPath = `${servePath}/${files.filetoupload.name}`
 
-      fs.move(oldpath, newpath, (err) => {
+      fs.move(tempUploadedPath, finalUploadedPath, (err) => {
         if (err) {
           const compiled = template(result_template)
           const resultHtml = compiled({
@@ -63,7 +64,7 @@ const server = http.createServer((request, response) => {
   } else {
     return handler(request, response, {
       public: servePath,
-      unlisted: ["simple_http_server.py"],
+      unlisted: [], //hide any file listed that's here
     })
   }
 })
