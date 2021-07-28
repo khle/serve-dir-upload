@@ -1,35 +1,41 @@
-const handler = require("serve-handler")
-const http = require("http")
-const fs = require("fs-extra")
-const formidable = require("formidable")
-const template = require("lodash.template")
+const handler = require('serve-handler')
+const https = require('https')
+const helmet = require('helmet')
+const fs = require('fs-extra')
+const formidable = require('formidable')
+const template = require('lodash.template')
 
 // html file containing upload form
-const upload_html = fs.readFileSync("upload_file.html")
-const index_html = fs.readFileSync("index.html")
-const result_template = fs.readFileSync("result_template.txt")
+const upload_html = fs.readFileSync('upload_file.html')
+const index_html = fs.readFileSync('index.html')
+const result_template = fs.readFileSync('result_template.txt')
 
 // replace this with the location to save uploaded files
 const servePath = process.env.SERVE_PATH
 
-const server = http.createServer((request, response) => {
-  if (request.url == "/") {
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem'),
+}
+
+const server = https.createServer(options, (request, response) => {
+  if (request.url == '/') {
     response.writeHead(200)
     response.write(index_html)
     return response.end()
-  } else if (request.url === "/_list" || request.url === "/_list/") {
-    request.url = "/"
+  } else if (request.url === '/_list' || request.url === '/_list/') {
+    request.url = '/'
     return handler(request, response, {
       public: servePath,
-      unlisted: ["simple_http_server.py"],
+      unlisted: ['simple_http_server.py'],
     })
-  } else if (request.url == "/_upload" || request.url == "/_upload/") {
+  } else if (request.url == '/_upload' || request.url == '/_upload/') {
     response.writeHead(200)
     response.write(upload_html)
     return response.end()
   } else if (
-    (request.url == "/_doupload" || request.url == "/_doupload/") &&
-    request.method === "POST"
+    (request.url == '/_doupload' || request.url == '/_doupload/') &&
+    request.method === 'POST'
   ) {
     const form = new formidable.IncomingForm()
     form.parse(request, (_err, _fields, files) => {
@@ -51,7 +57,7 @@ const server = http.createServer((request, response) => {
           const compiled = template(result_template)
           const resultHtml = compiled({
             uploadedFile: files.filetoupload.name,
-            resultUploadingFile: "File uploaded successfully",
+            resultUploadingFile: 'File uploaded successfully',
           })
 
           response.writeHead(200)
@@ -69,5 +75,5 @@ const server = http.createServer((request, response) => {
 })
 
 server.listen(process.env.PORT, () => {
-  console.log(`Server running @ http://localhost:${process.env.PORT}`)
+  console.log(`Server running @ https://localhost:${process.env.PORT}`)
 })

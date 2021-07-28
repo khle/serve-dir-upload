@@ -123,3 +123,8 @@ dist
 .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+
+server.cert
+server.key
+cert.pem
+key.pem

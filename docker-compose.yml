@@ -13,4 +13,4 @@ services:
       - /home/kevin/Books/:${SERVE_PATH}
     ports:
       - 8000:${PORT}
-    restart: unless-stopped
+    restart: always
